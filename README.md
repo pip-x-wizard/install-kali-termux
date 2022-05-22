@@ -10,7 +10,7 @@
 #### Open termux and paste this code to install kali on it:
 ```bash
 apt update && apt install wget -y
-wget -O install_kali https://git.io/JUnAD 
+wget -O install_kali [https://git.io/install_kali ](https://github.com/almost2late/install-kali-termux/blob/master/install.sh)
 chmod +x install_kali
 ./install_kali
 ```
