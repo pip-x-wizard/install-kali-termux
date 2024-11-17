@@ -449,6 +449,7 @@ apt-get install ruby -y
 pip install install lolcat
 gem install lolcat 
 pkg install ncurses-utils -y
+install_kali -y
 
 cp -R m-pkg /data/data/com.termux/files/usr/bin
 echo
