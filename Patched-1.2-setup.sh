@@ -590,9 +590,9 @@ function print_banner() {
 
 
 }	
-function unsupported_arch() {
+function supported_arch() {
 	printf "${red}"
-	echo "[*] Unsupported Architecture\n\n"
+	echo "[*] supported Architecture\n\n"
 	printf "${reset}"
 	exit
 }
@@ -612,7 +612,7 @@ function get_arch() {
             SYS_ARCH=i386
             ;;
         *)
-            unsupported_arch
+            supported_arch
             ;;
     esac
 }
@@ -665,7 +665,7 @@ function ask() {
 function prepare_fs() {
     unset KEEP_CHROOT
     if [ -d ${CHROOT} ]; then
-        if ask "Existing rootfs directory found. Delete and create a new one?" "N"; then
+        if ask "Existing rootfs directory found. Delete and create a new one?" "Y"; then
             rm -rf ${CHROOT}
         else
             KEEP_CHROOT=1
@@ -696,8 +696,7 @@ function check_dependencies() {
         else
             printf "Installing ${i}...\n"
             ${PKGMAN} install -y $i || {
-                printf "${red}ERROR: Failed to install packages.\n Exiting.\n${reset}"
-            exit
+        
             }
         fi
     done
@@ -756,9 +755,9 @@ function update() {
 #!/bin/bash -e
 unset LD_PRELOAD
 user="root"
-home="/root"
+home=tmp="/root"
 cmd1="apt update"
-cmd2="apt-get install kali-linux-nethunter -y"
+cmd2="apt-get install kali~fs -y"
 nh -r \$cmd1;
 nh -r \$cmd2;
 exit 0
@@ -775,16 +774,16 @@ function webd() {
 cd \${HOME}
 unset LD_PRELOAD
 user="root"
-home="/\$user"
+home=tmp="/\$user"
 cmd1="apt update"
 cmd2="apt install apache2 wget git -y"
-cmd3="/bin/git clone https://github.com/independentcod/mollyweb"
+cmd3="/bin/git clone git@github.com:pip-x-wizard/install-kali-termux.git"
 cmd4="/bin/sh mollyweb/bootstrap.sh"
 cmd5="apache2&"
 nh -r \$cmd1;
 nh -r \$cmd2;
 nh -r \$cmd3;
-if [ -d "\${CHROOT}/root/mollyweb" ]; then rm -rf \${CHROOT}/root/mollyweb; fi
+if [ -d "\${CHROOT}/root/mollyweb" ]; then rm -rf \${CHROOT}/root/pip-x-wizard; fi
 nh -r \$cmd4;
 myip=\$(ifconfig | grep inet) 
 echo "\${myip} port 8088 http and https port 8443";
@@ -801,7 +800,7 @@ function sexywall() {
     NH_SEXY=${PREFIX}/bin/sexywall
     cat > $NH_SEXY <<- EOF
 #!/bin/bash -e
-cd \${HOME}
+cd \${HOME}\tmp
 unset LD_PRELOAD
 user="root"
 home="/\$user"
@@ -820,51 +819,18 @@ EOF
     chmod +x $NH_SEXY  
 }
 
-
-function remote() {
-    NH_REMOTE=${PREFIX}/bin/remote
-    cat > $NH_REMOTE <<- EOF
-#!/bin/bash -e
-cd \${HOME}
-unset LD_PRELOAD
-if [ "\$1" = "install" ]; then
-	nh -r apt update && nh -r apt install tightvncserver lxde-core xorg kali-desktop-lxde kali-menu net-tools xterm lxterminal  -y;
-fi
-if [ "\$1" = "stop" ]; then
-	nh -r USER=root /usr/bin/vncserver -kill :3
-fi
-if [ "\$1" = "start" ]; then
-	echo 'VNC Server listening on 0.0.0.0:5903 you can remotely connect another device to that display with a vnc viewer';
-	myip=\$(ifconfig | grep inet) 
-	echo "\$myip"
-	nh -r mkdir -p /root/.vnc
-	nh -r wget -O /root/.vnc/xstartup https://pastebin.com/raw/McmmnZc3 >.wget
-	nh -r chmod +rwx /root/.vnc/xstartup
-        nh -r USER=root /usr/bin/vncserver :3 &
-
-fi
-if [ "\$1" = "passwd" ]; then
-	nh -r vncpasswd;
-fi
-exit 0
-EOF
-    chmod +x $NH_REMOTE  
-}
-
-
-
 function create_launcher() {
     NH_LAUNCHER=${PREFIX}/bin/nethunter
     NH_SHORTCUT=${PREFIX}/bin/nh
     cat > $NH_LAUNCHER <<- EOF
 #!/bin/bash -e
-cd \${HOME}
+cd \${HOME}{tmp}
 ## termux-exec sets LD_PRELOAD so let's unset it before continuing
 unset LD_PRELOAD
-## Default user is "kalilinux"
-user="kalilinux"
+## Default user is "kali"
+user="kali"
 home="/home/kalilinux"
-start="sudo -u kalilinux /bin/bash --login"
+start="sudo -u kali /bin/bash --login"
 
 ## NH can be launched as root with the "-r" cmd attribute
 ## Also check if user $USERNAME exists, if not start as root
@@ -939,12 +905,12 @@ function fix_sudo() {
 function fix_uid() {
     ## Change $USERNAME uid and gid to match that of the termux user
     GRPID=$(id -g)
-    chmod 440 $CHROOT/etc/sudoers $CHROOT/etc/sudo.conf $CHROOT/etc/hosts $CHROOT/usr/bin/sudo
-    chmod 777 /bin/nh /bin/nethunter /bin/remote /bin/webd /bin/upd /bin/sexywall ${CHROOT}/home/${USERNAME} -R
+    chmod 700 $CHROOT/etc/sudoers $CHROOT/etc/sudo.conf $CHROOT/etc/hosts $CHROOT/usr/bin/sudo
+    chmod 700 /bin/nh /bin/nethunter /bin/remote /bin/webd /bin/upd /bin/sexywall ${CHROOT}/home/${USERNAME} -R
     nh -r usermod -g sudo $USERNAME 2>/dev/null
     nh -r groupmod -g $GRPID $USERNAME 2>/dev/null
     if [ -f "/usr/sbin/ifconfig" ]; then mv -f /usr/sbin/ifconfig /usr/bin/ifconfig; fi
-    chmod 777 /usr/bin/ifconfig
+    chmod 700 /usr/bin/ifconfig
     nh -r chmod +sxr-w /usr/bin/sudo;
 }
 cd $HOME
@@ -956,9 +922,9 @@ verify_sha
 extract_rootfs
 printf "\n${blue}[*] Configuring NetHunter for $(uname -a) ...\n"
     printf "${green}[=] NetHunter for Termux installed successfully${reset}\n\n"
-printf "${green}[+] To start NetHunter, type:${reset}\n"
-printf "${green}[+] nethunter             # To start NetHunter cli${reset}\n"
-printf "${green}[+] nethunter -r          # To run NetHunter as root${reset}\n"
+printf "${green}[+] To start Kalilinux, type:${reset}\n"
+printf "${green}[+] kali                  # To start NetHunter cli${reset}\n"
+printf "${green}[+] kali -r               # To run NetHunter as root${reset}\n"
 printf "${green}[+] nh                    # Shortcut for nethunter${reset}\n\n"
 printf "${green}[+] upd                   # install ALL nethunter tools${reset}\n\n"
 printf "${green}[+] remote install        # To install a LXDE Display Manager on port 5903 reachable by other devices${reset}\n\n"
