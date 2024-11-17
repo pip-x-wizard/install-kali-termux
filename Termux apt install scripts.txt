@@ -5,17 +5,17 @@ bash
 
      
      # Add user.
-useradd -m username
+useradd -m anton
 # -m creates a home directory for the user.
 
 # Set Password.
-passwd username
+passwd anton
 
 # Set user group to sudo.
-usermod -a -G sudo username
+usermod -a -G sudo anton
 # -a option to add and ‘-G sudo’ means to add the user to the sudo group.
 
-chsh -s /bin/bash username
+chsh -s /bin/bash anton
 # chsh command is used to change the login shell for a user.
      
      
@@ -35,14 +35,6 @@ Default Port is:  8091
 [*] Default password is:  123qwe
 [*] Run  code-server  for start.
 
-
-
-     
-     
-     
-     
-     
-     
      # install-kali-termux
 ### Custom Kali installation based on the minimal file-system of the official nethunter repositories from Offensive Security, in termux with a rooted device.
 ### More functions were added than in the script provided by offensive security and I will add more when the time comes.
@@ -51,15 +43,11 @@ Default Port is:  8091
   <img width="460" height="300" src="https://github.com/ind3p3nd3nt/install-kali-termux/raw/master/Annotation%202021-08-24%20155445.png">
 </p>
 
-
-#### Open termux and paste this code to install kali on it:
-```bash
 apt update && apt install wget -y
 wget -O install_kali https://github.com/almost2late/install-kali-termux/blob/master/install.sh
 chmod +x install_kali
 ./install_kali
-```
 
 
 ## NEW:
-### Support for x86 and AMD64 added; now you can install kali in an Android emulator!
+### Support for x86 and ARM64 added; now you can install kali in an Android emulator!
