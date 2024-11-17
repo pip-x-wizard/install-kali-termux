@@ -1,7 +1,7 @@
 
 ###############################
 
-pkg install wget
+pkg install upgrade 
 apt update && apt install wget -y
 wget -O install_kali-linux-large
 https://github.com/pip-x-wizard/install-kali-termux.
