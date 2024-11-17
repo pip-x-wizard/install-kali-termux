@@ -202,7 +202,7 @@ unset LD_PRELOAD
 user="root"
 home="/root"
 cmd1="apt update"
-cmd2="apt-get install kali-linux-nethunter -y"
+cmd2="apt-get install_kali -y"
 nh -r \$cmd1;
 nh -r \$cmd2;
 exit 0
