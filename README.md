@@ -49,3 +49,19 @@ exec bash
 
 ## NEW:
 ### Support for x86 and AMD64 added; now you can install kali in an Android emulator!
+
+	clear
+	setup_base
+	clear
+	install_zsh
+	setup_omz
+	install_vsc_repo
+	setup_net
+	install_adb
+	configure_vsc
+	setup_finaly
+}
+
+## Main
+install_vsc
+
